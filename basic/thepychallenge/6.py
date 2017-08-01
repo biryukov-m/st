@@ -1,0 +1,1 @@
+# http://ninjaside.info/blog/ru/funkcii-map-i-zip-i-lambda-python/
