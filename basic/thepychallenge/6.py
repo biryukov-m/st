@@ -1,51 +1,41 @@
-# http://ninjaside.info/blog/ru/funkcii-map-i-zip-i-lambda-python/
-
 from urllib import request as req
 import zipfile
 import re
 
-import requests
 zipurl = 'http://www.pythonchallenge.com/pc/def/channel.zip'
 url = req.urlopen(zipurl)
+# Filename
 name = zipurl[-11:]
-
+# Writing zipurl to filesystem
 with open(name, 'wb') as f:
     f.write(url.read())
-
+# Creating zipfile object
 zf = zipfile.ZipFile(name)
-name += '/99905.txt'
-print(name)
-zi = zipfile.ZipInfo(name)
-print(zi.comment)
-# print(zf.namelist())
-# print(zf.getinfo('29.txt'))
-# zf.extractall('./zfiles')
-# infl = list(zf.infolist())
-# for i in infl:
-    # print(type(i))
-    # if 'com' in i:
-    #     print(i)
-# print(type(list(zf.infolist())))
-# for member in zf.namelist():
-#     pr = zf.getinfo(member)
-#     pr = zf.comment
-#     print(pr)
-
-# path = ('./zfiles/')
-# nothing = '90052'
-# ext = '.txt'
-# b = []
-# comments = []
-# while True:
-#     try:
-#         with open(path+nothing+ext, 'r') as txt:
-#             line = txt.readline()
-#             print(line)
-#             nothing = re.findall('nothing is (\d+)', line)[0]
-#             b.append(nothing+ext)
-#     except:
-#         break
-# print(len(zf.namelist()))
-# a = zf.namelist()
-# print(len(b))
-# print(set.difference(set(a), set(b)))
+# Lets see what we have in archive
+# [print(file) for file in zf.filelist]
+# OK, found readme.txt, reading
+read = zf.read('readme.txt')
+print(read)
+# Starting from 90052, reading
+read = zf.read('90052.txt')
+print(read)
+# That's the trick with the nothings
+# Starting to search from 90052.txt
+nothing = '90052'
+# Reading text in all files consecutive
+# STEP 2  Com for collecting comments
+com = []
+while True:
+    # Extracting file with dynamic path
+    read = zf.read(nothing+'.txt')
+    # Converting byte obj to string
+    read = read.decode('ascii')
+    # STEP 2 Collecting comments
+    com.append(zf.getinfo(nothing+'.txt').comment.decode('ascii'))
+    # With regex finding digits, when pattern coincided
+    try:
+        nothing = re.findall('Next nothing is (\d+)', read)[0]
+    except:
+        break
+# STEP 2
+print(''.join(com))
