@@ -15,7 +15,7 @@ zf = zipfile.ZipFile(name)
 # [print(file) for file in zf.filelist]
 # OK, found readme.txt, reading
 read = zf.read('readme.txt')
-print(read)
+print(read.decode('ascii'))
 # Starting from 90052, reading
 read = zf.read('90052.txt')
 print(read)
@@ -30,6 +30,7 @@ while True:
     read = zf.read(nothing+'.txt')
     # Converting byte obj to string
     read = read.decode('ascii')
+    # print(read)
     # STEP 2 Collecting comments
     com.append(zf.getinfo(nothing+'.txt').comment.decode('ascii'))
     # With regex finding digits, when pattern coincided
@@ -37,5 +38,6 @@ while True:
         nothing = re.findall('Next nothing is (\d+)', read)[0]
     except:
         break
+# print(com)
 # STEP 2
 print(''.join(com))
